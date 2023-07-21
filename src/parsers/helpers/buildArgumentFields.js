@@ -1,22 +1,23 @@
-const { GraphQLNonNull, GraphQLEnumType, GraphQLList } = require("graphql");
+const { GraphQLNonNull, GraphQLEnumType, GraphQLList } = require('graphql');
 
 const getDefault = (field, fieldType) => {
   if (fieldType instanceof GraphQLEnumType) return fieldType.getValues()[0].value;
 
   switch (fieldType.name) {
-    case "String":
+    case 'String':
       return `"${field.name}"`;
-    case "Int":
-    case "Float":
-      return `1`;
+    case 'Int':
+    case 'Float':
+      return '1';
     default:
+      // eslint-disable-next-line no-console
       console.warn(`${fieldType.name} not yet supported`);
       return `"${fieldType.name}"`;
   }
 };
 
 const mapDefault = (field, fieldType) => {
-  if (!(field.type instanceof GraphQLNonNull)) return "null";
+  if (!(field.type instanceof GraphQLNonNull)) return 'null';
 
   const fieldDefault = getDefault(field, fieldType);
 
@@ -26,10 +27,10 @@ const mapDefault = (field, fieldType) => {
 };
 
 const buildType = (gqlSchema, argument, maxDepth, currDepth = 0) => {
-  let queryStr = "";
+  let queryStr = '';
 
   if (currDepth >= maxDepth) return queryStr;
-  const currArgumentName = argument.type.toJSON().replace(/[[\]!]/g, "");
+  const currArgumentName = argument.type.toJSON().replace(/[[\]!]/g, '');
   const currArgumentType = gqlSchema.getType(currArgumentName);
   if (!currArgumentType.getFields) {
     return mapDefault(argument, currArgumentType);
@@ -37,11 +38,11 @@ const buildType = (gqlSchema, argument, maxDepth, currDepth = 0) => {
 
   const fields = currArgumentType.getFields();
 
-  queryStr += "{\n";
+  queryStr += '{\n';
 
   Object.keys(fields).forEach((fieldName) => {
     const field = fields[fieldName];
-    const currTypeName = field.type.toJSON().replace(/[[\]!]/g, "");
+    const currTypeName = field.type.toJSON().replace(/[[\]!]/g, '');
     const fieldType = gqlSchema.getType(currTypeName);
 
     if (!fieldType.getFields) {
@@ -58,7 +59,7 @@ const buildType = (gqlSchema, argument, maxDepth, currDepth = 0) => {
 
     queryStr += `${fieldName}: ${typeQuery}\n`;
   });
-  queryStr += "}";
+  queryStr += '}';
 
   return queryStr;
 };

@@ -1,9 +1,9 @@
-const { format } = require("prettier/standalone");
-const gql = require("prettier/plugins/graphql");
+const { format } = require('prettier/standalone');
+const gql = require('prettier/plugins/graphql');
 
 const formatter = async (query) =>
   format(query, {
-    parser: "graphql",
+    parser: 'graphql',
     plugins: [gql],
   });
 

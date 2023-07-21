@@ -1,18 +1,18 @@
-const { buildArgumentFields } = require("./buildArgumentFields");
-const { buildRequestFields } = require("./buildRequestFields");
+const { buildArgumentFields } = require('./buildArgumentFields');
+const { buildRequestFields } = require('./buildRequestFields');
 
 const buildOperation = (gqlSchema, operation, maxDepth) => {
-  let queryStr = "";
+  let queryStr = '';
   queryStr += `${operation.name} `;
   const inputArguments = operation.args
     .map((arg) => buildArgumentFields(gqlSchema, arg, maxDepth))
-    .join("\n");
+    .join('\n');
   if (inputArguments) queryStr += `(${inputArguments})`;
 
   const requestedFields = buildRequestFields(
     gqlSchema,
     operation.type?.ofType?.name ?? operation.type?.name,
-    maxDepth
+    maxDepth,
   );
   queryStr += requestedFields;
   return queryStr;

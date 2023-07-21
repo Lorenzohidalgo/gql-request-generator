@@ -1,4 +1,4 @@
-const { formatter } = require("./formatter");
+const { formatter } = require('./formatter');
 
 module.exports = {
   formatter,

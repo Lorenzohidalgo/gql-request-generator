@@ -1,5 +1,5 @@
 const buildRequestFields = (gqlSchema, typeName, maxDepth, currDepth = 0) => {
-  let queryStr = "";
+  let queryStr = '';
 
   if (!gqlSchema.getType(typeName).getFields) return queryStr;
 
@@ -9,7 +9,7 @@ const buildRequestFields = (gqlSchema, typeName, maxDepth, currDepth = 0) => {
 
   Object.keys(fields).forEach((fieldName) => {
     const field = fields[fieldName];
-    const currTypeName = field.type.toJSON().replace(/[[\]!]/g, "");
+    const currTypeName = field.type.toJSON().replace(/[[\]!]/g, '');
     const fieldType = gqlSchema.getType(currTypeName);
 
     if (!fieldType.getFields) {
@@ -21,7 +21,7 @@ const buildRequestFields = (gqlSchema, typeName, maxDepth, currDepth = 0) => {
       gqlSchema,
       currTypeName,
       maxDepth,
-      currDepth + 1
+      currDepth + 1,
     )}\n`;
   });
 

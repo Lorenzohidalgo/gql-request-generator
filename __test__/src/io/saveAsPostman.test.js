@@ -1,25 +1,18 @@
-const { saveAsPostman } = require("../../../src/io/saveAsPostman");
+const { saveAsPostman } = require('../../../src/io/saveAsPostman');
 
-jest.mock("fs", () => ({
+jest.mock('fs', () => ({
   mkdirSync: jest.fn(),
   writeFileSync: jest.fn(),
 }));
 
-describe("Test handler.js", () => {
-  test("test1", async () => {
+describe('Test handler.js', () => {
+  test('test1', async () => {
     const parsedSchema = {
-      mutations: [{ operationName: "operationName", operation: "operation" }],
-      queries: [{ operationName: "operationName", operation: "operation" }],
-      subscriptions: [
-        { operationName: "operationName", operation: "operation" },
-      ],
+      mutations: [{ operationName: 'operationName', operation: 'operation' }],
+      queries: [{ operationName: 'operationName', operation: 'operation' }],
+      subscriptions: [{ operationName: 'operationName', operation: 'operation' }],
     };
 
-    saveAsPostman(
-      "./outDir",
-      parsedSchema,
-      "collectionName",
-      "https://my-appsync.url.com/graphql"
-    );
+    saveAsPostman('./outDir', parsedSchema, 'collectionName', 'https://my-appsync.url.com/graphql');
   });
 });

@@ -1,13 +1,17 @@
-const { mkdirSync, writeFileSync } = require("fs");
-const { resolve, join } = require("path");
+const { mkdirSync, writeFileSync } = require('fs');
+const { resolve, join } = require('path');
+
+const createDir = (path) => {
+  try {
+    mkdirSync(path);
+  } catch (err) {
+    if (err.code !== 'EEXIST') throw err;
+  }
+};
 
 const saveFile = (destinationDirectory, outputFolder, fileName, contents) => {
   const writeFolder = join(destinationDirectory, `./${outputFolder}`);
-  try {
-    mkdirSync(writeFolder);
-  } catch (err) {
-    if (err.code !== "EEXIST") throw err;
-  }
+  createDir(writeFolder);
   writeFileSync(join(writeFolder, `./${fileName}`), contents);
 };
 
@@ -17,27 +21,28 @@ const saveAll = (destinationDirectory, outputFolder, operations) =>
       destinationDirectory,
       outputFolder,
       `${operation.operationName}.graphql`,
-      operation.operation
-    )
+      operation.operation,
+    ),
   );
 
 const saveAsFiles = (destinationDirectory, parsedSchema) => {
-  try {
-    mkdirSync(resolve(destinationDirectory));
-  } catch (err) {
-    if (err.code !== "EEXIST") throw err;
+  if (!parsedSchema.mutations && !parsedSchema.queries && !parsedSchema.subscriptions) {
+    console.error('No operations found to be saved');
+    return;
   }
 
+  createDir(destinationDirectory);
+
   if (parsedSchema.mutations) {
-    saveAll(destinationDirectory, "mutations", parsedSchema.mutations);
+    saveAll(destinationDirectory, 'mutations', parsedSchema.mutations);
   }
 
   if (parsedSchema.queries) {
-    saveAll(destinationDirectory, "queries", parsedSchema.queries);
+    saveAll(destinationDirectory, 'queries', parsedSchema.queries);
   }
 
   if (parsedSchema.subscriptions) {
-    saveAll(destinationDirectory, "subscriptions", parsedSchema.subscriptions);
+    saveAll(destinationDirectory, 'subscriptions', parsedSchema.subscriptions);
   }
 };
 

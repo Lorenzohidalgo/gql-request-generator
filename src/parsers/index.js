@@ -1,4 +1,4 @@
-const { parseSchema } = require("./parseSchema");
+const { parseSchema } = require('./parseSchema');
 
 module.exports = {
   parseSchema,

@@ -1,5 +1,5 @@
-const { readFileSync } = require("fs");
-const { Source, buildSchema } = require("graphql");
+const { readFileSync } = require('fs');
+const { Source, buildSchema } = require('graphql');
 
 const loadAndGenerateSchema = (schemaFilePath, encoding, assumeValidSDL) => {
   const typeDef = readFileSync(schemaFilePath, { encoding });

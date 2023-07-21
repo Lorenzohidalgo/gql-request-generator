@@ -1,19 +1,85 @@
-const { saveAsFiles } = require("../../../src/io/saveAsFiles");
+/* eslint-disable no-throw-literal */
+const { mkdirSync, writeFileSync } = require('fs');
+const { saveAsFiles } = require('../../../src/io/saveAsFiles');
 
-jest.mock("fs", () => ({
+jest.mock('fs', () => ({
   mkdirSync: jest.fn(),
   writeFileSync: jest.fn(),
 }));
 
-describe("Test handler.js", () => {
-  test("test1", async () => {
+describe('Test saveAsFiles.js', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test('Happy Path', async () => {
     const parsedSchema = {
-      mutations: [{ operationName: "operationName", operation: "operation" }],
-      queries: [{ operationName: "operationName", operation: "operation" }],
-      subscriptions: [
-        { operationName: "operationName", operation: "operation" },
-      ],
+      mutations: [{ operationName: 'operationName', operation: 'operation' }],
+      queries: [{ operationName: 'operationName', operation: 'operation' }],
+      subscriptions: [{ operationName: 'operationName', operation: 'operation' }],
     };
-    saveAsFiles("./outputDir", parsedSchema);
+    saveAsFiles('./outputDir', parsedSchema);
+    expect(writeFileSync).toHaveBeenCalledTimes(3);
+    expect(mkdirSync).toHaveBeenCalledTimes(4);
+  });
+
+  test('Only mutations', async () => {
+    const parsedSchema = {
+      mutations: [{ operationName: 'operationName', operation: 'operation' }],
+    };
+    saveAsFiles('./outputDir', parsedSchema);
+    expect(writeFileSync).toHaveBeenCalledTimes(1);
+    expect(mkdirSync).toHaveBeenCalledTimes(2);
+  });
+
+  test('Only queries and subscriptions', async () => {
+    const parsedSchema = {
+      queries: [{ operationName: 'operationName', operation: 'operation' }],
+      subscriptions: [{ operationName: 'operationName', operation: 'operation' }],
+    };
+    saveAsFiles('./outputDir', parsedSchema);
+    expect(writeFileSync).toHaveBeenCalledTimes(2);
+    expect(mkdirSync).toHaveBeenCalledTimes(3);
+  });
+
+  test('No operations available', async () => {
+    const parsedSchema = {};
+    saveAsFiles('./outputDir', parsedSchema);
+    expect(writeFileSync).toHaveBeenCalledTimes(0);
+    expect(mkdirSync).toHaveBeenCalledTimes(0);
+  });
+
+  test('Error Handling 1 - not EEXIST', async () => {
+    const parsedSchema = {
+      mutations: [{ operationName: 'operationName', operation: 'operation' }],
+      queries: [{ operationName: 'operationName', operation: 'operation' }],
+      subscriptions: [{ operationName: 'operationName', operation: 'operation' }],
+    };
+    mkdirSync.mockImplementationOnce(() => {
+      throw new Error();
+    });
+    try {
+      saveAsFiles('./outputDir', parsedSchema);
+      expect(false).toBe(true);
+    } catch (error) {
+      expect(true).toBe(true);
+    }
+  });
+
+  test('Error Handling 1 - EEXIST', async () => {
+    const parsedSchema = {
+      mutations: [{ operationName: 'operationName', operation: 'operation' }],
+      queries: [{ operationName: 'operationName', operation: 'operation' }],
+      subscriptions: [{ operationName: 'operationName', operation: 'operation' }],
+    };
+    mkdirSync.mockImplementationOnce(() => {
+      throw { code: 'EEXIST' };
+    });
+    try {
+      saveAsFiles('./outputDir', parsedSchema);
+      expect(false).toBe(true);
+    } catch (error) {
+      expect(true).toBe(true);
+    }
   });
 });

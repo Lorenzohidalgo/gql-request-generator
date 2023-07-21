@@ -1,17 +1,12 @@
-const { resolve } = require("path");
-const { loadAndGenerateSchema } = require("../../../../src/io/loadSchema");
-const {
-  buildOperation,
-} = require("../../../../src/parsers/helpers/buildOperation");
+const { resolve } = require('path');
+const { loadAndGenerateSchema } = require('../../../../src/io/loadSchema');
+const { buildOperation } = require('../../../../src/parsers/helpers/buildOperation');
 
-describe("Test handler.js", () => {
-  const schemaFilePath = resolve("./samples/basic.graphql");
-  const gqlSchema = loadAndGenerateSchema(schemaFilePath, "utf-8", true);
+describe('Test handler.js', () => {
+  const schemaFilePath = resolve('./samples/basic.graphql');
+  const gqlSchema = loadAndGenerateSchema(schemaFilePath, 'utf-8', true);
 
-  test("test1", async () => {
-    const Type = buildOperation(
-      gqlSchema,
-      gqlSchema.getQueryType().getFields()["Notifications"]
-    );
+  test('test1', async () => {
+    buildOperation(gqlSchema, gqlSchema.getQueryType().getFields().Notifications);
   });
 });
