@@ -1,5 +1,5 @@
 const { mkdirSync, writeFileSync } = require('fs');
-const { resolve, join } = require('path');
+const { join } = require('path');
 
 const createDir = (path) => {
   try {
@@ -27,6 +27,7 @@ const saveAll = (destinationDirectory, outputFolder, operations) =>
 
 const saveAsFiles = (destinationDirectory, parsedSchema) => {
   if (!parsedSchema.mutations && !parsedSchema.queries && !parsedSchema.subscriptions) {
+    // eslint-disable-next-line no-console
     console.error('No operations found to be saved');
     return;
   }

@@ -23,6 +23,12 @@ const buildItemList = (operations, rawUrl) =>
   );
 
 const saveAsPostman = (destinationDirectory, parsedSchema, collectionName, rawUrl) => {
+  if (!parsedSchema.mutations && !parsedSchema.queries && !parsedSchema.subscriptions) {
+    // eslint-disable-next-line no-console
+    console.error('No operations found to be saved');
+    return;
+  }
+  
   const newCollection = new Collection({
     info: {
       name: collectionName,

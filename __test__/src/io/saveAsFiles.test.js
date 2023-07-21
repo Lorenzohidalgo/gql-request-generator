@@ -1,4 +1,3 @@
-/* eslint-disable no-throw-literal */
 const { mkdirSync, writeFileSync } = require('fs');
 const { saveAsFiles } = require('../../../src/io/saveAsFiles');
 
@@ -49,7 +48,7 @@ describe('Test saveAsFiles.js', () => {
     expect(mkdirSync).toHaveBeenCalledTimes(0);
   });
 
-  test('Error Handling 1 - not EEXIST', async () => {
+  test('Error Handling - not EEXIST', async () => {
     const parsedSchema = {
       mutations: [{ operationName: 'operationName', operation: 'operation' }],
       queries: [{ operationName: 'operationName', operation: 'operation' }],
@@ -66,13 +65,14 @@ describe('Test saveAsFiles.js', () => {
     }
   });
 
-  test('Error Handling 1 - EEXIST', async () => {
+  test('Error Handling - EEXIST', async () => {
     const parsedSchema = {
       mutations: [{ operationName: 'operationName', operation: 'operation' }],
       queries: [{ operationName: 'operationName', operation: 'operation' }],
       subscriptions: [{ operationName: 'operationName', operation: 'operation' }],
     };
     mkdirSync.mockImplementationOnce(() => {
+      // eslint-disable-next-line no-throw-literal
       throw { code: 'EEXIST' };
     });
     try {
