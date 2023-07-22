@@ -1,5 +1,9 @@
 name: Snyk Security Check
-on: [pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
 jobs:
   security:
     runs-on: ubuntu-latest
