@@ -11,7 +11,7 @@
     "lint": "eslint ./",
     "linter": "npx eslint . --fix",
     "prettier": "npx prettier --write .",
-    "semantic-release": "semantic-releas
+    "semantic-release": "semantic-release"
   },
   "jest": {
     "testEnvironment": "node",
