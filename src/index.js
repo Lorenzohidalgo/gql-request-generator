@@ -6,13 +6,14 @@ const main = async ({
   destDirPath,
   collectionName,
   rawUrl,
+  useVariables = 'false',
   maxDepth = 10,
   encoding = 'utf-8',
-  assumeValidSDL = true,
+  assumeValidSDL = 'true',
 }) => {
-  const gqlSchema = loadAndGenerateSchema(schemaFilePath, encoding, assumeValidSDL);
+  const gqlSchema = loadAndGenerateSchema(schemaFilePath, encoding, JSON.parse(assumeValidSDL));
 
-  const parsedSchema = await parseSchema(gqlSchema, maxDepth);
+  const parsedSchema = await parseSchema(gqlSchema, JSON.parse(useVariables), maxDepth);
 
   saveAsFiles(destDirPath, parsedSchema);
 

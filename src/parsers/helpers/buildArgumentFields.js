@@ -16,7 +16,9 @@ const getDefault = (field, fieldType) => {
   }
 };
 
-const mapDefault = (field, fieldType) => {
+const mapDefault = (field, fieldType, useVariables) => {
+  if (useVariables) return `$${field.name}`;
+
   if (!(field.type instanceof GraphQLNonNull)) return 'null';
 
   const fieldDefault = getDefault(field, fieldType);
@@ -26,14 +28,14 @@ const mapDefault = (field, fieldType) => {
   return fieldDefault;
 };
 
-const buildType = (gqlSchema, argument, maxDepth, currDepth = 0) => {
+const buildType = (gqlSchema, argument, useVariables, maxDepth, currDepth = 0) => {
   let queryStr = '';
 
   if (currDepth >= maxDepth) return queryStr;
   const currArgumentName = argument.type.toJSON().replace(/[[\]!]/g, '');
   const currArgumentType = gqlSchema.getType(currArgumentName);
-  if (!currArgumentType.getFields) {
-    return mapDefault(argument, currArgumentType);
+  if (!currArgumentType.getFields ||  useVariables) {
+    return mapDefault(argument, currArgumentType, useVariables);
   }
 
   const fields = currArgumentType.getFields();
@@ -64,8 +66,8 @@ const buildType = (gqlSchema, argument, maxDepth, currDepth = 0) => {
   return queryStr;
 };
 
-const buildArgumentFields = (gqlSchema, argument, maxDepth) =>
-  `${argument.name}: ${buildType(gqlSchema, argument, maxDepth)}`;
+const buildArgumentFields = (gqlSchema, argument, useVariables, maxDepth) =>
+  `${argument.name}: ${buildType(gqlSchema, argument, useVariables, maxDepth)}`;
 
 module.exports = {
   buildArgumentFields,

@@ -1,25 +1,34 @@
-const { formatter } = require('../formatter');
+const { formatGQL, formatJSON } = require('../formatter');
 const { buildOperation } = require('./helpers/buildOperation');
+const { buildVariables } = require('./helpers/buildVariables');
 const { MUTATION, QUERY, SUBSCRIPTION } = require('./helpers/wrappers');
 
-const mapOperation = async (operationName, raw) => {
-  const operation = await formatter(raw);
-  return { operationName, operation };
+const mapOperation = async (operationName, raw, varObject) => {
+  const operation = await formatGQL(raw);
+  const variables = varObject ? await formatJSON(JSON.stringify(varObject)) : null;
+  return { operationName, operation, variables };
 };
 
-const parseOperations = (gqlSchema, operationType, wrapper, maxDepth) => {
+const parseOperations = (gqlSchema, operationType, wrapper, useVariables, maxDepth) => {
   const operationFields = operationType.getFields();
   return Object.keys(operationFields).map((opName) => {
-    const raw = wrapper(opName, buildOperation(gqlSchema, operationFields[opName], maxDepth));
-    return mapOperation(opName, raw);
+    const variables = useVariables
+      ? buildVariables(gqlSchema, operationFields[opName], maxDepth)
+      : null;
+    const operation = useVariables ? opName + variables.string : opName;
+    const raw = wrapper(
+      operation,
+      buildOperation(gqlSchema, operationFields[opName], useVariables, maxDepth),
+    );
+    return mapOperation(opName, raw, variables?.json);
   });
 };
 
-const parseSchema = async (gqlSchema, maxDepth) => {
+const parseSchema = async (gqlSchema, useVariables, maxDepth) => {
   const parsedSchema = {};
   if (gqlSchema.getMutationType()) {
     parsedSchema.mutations = await Promise.all(
-      parseOperations(gqlSchema, gqlSchema.getMutationType(), MUTATION, maxDepth),
+      parseOperations(gqlSchema, gqlSchema.getMutationType(), MUTATION, useVariables, maxDepth),
     );
   } else {
     console.warn('No mutation type found in your schema');
@@ -27,7 +36,7 @@ const parseSchema = async (gqlSchema, maxDepth) => {
 
   if (gqlSchema.getQueryType()) {
     parsedSchema.queries = await Promise.all(
-      parseOperations(gqlSchema, gqlSchema.getQueryType(), QUERY, maxDepth),
+      parseOperations(gqlSchema, gqlSchema.getQueryType(), QUERY, useVariables, maxDepth),
     );
   } else {
     console.warn('No queries type found in your schema');
@@ -35,7 +44,13 @@ const parseSchema = async (gqlSchema, maxDepth) => {
 
   if (gqlSchema.getSubscriptionType()) {
     parsedSchema.subscriptions = await Promise.all(
-      parseOperations(gqlSchema, gqlSchema.getSubscriptionType(), SUBSCRIPTION, maxDepth),
+      parseOperations(
+        gqlSchema,
+        gqlSchema.getSubscriptionType(),
+        SUBSCRIPTION,
+        useVariables,
+        maxDepth,
+      ),
     );
   } else {
     console.warn('No subscriptions type found in your schema');

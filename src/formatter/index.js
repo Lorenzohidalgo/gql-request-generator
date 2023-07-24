@@ -1,5 +1,6 @@
-const { formatter } = require('./formatter');
+const { formatGQL, formatJSON } = require('./formatter');
 
 module.exports = {
-  formatter,
+  formatJSON,
+  formatGQL,
 };
