@@ -8,7 +8,11 @@ const getDefault = (field, fieldType) => {
       return `"${field.name}"`;
     case 'Int':
     case 'Float':
-      return '1';
+      return '0';
+    case 'ID':
+      return '"UUID"';
+    case 'Boolean':
+      return 'false';
     default:
       // eslint-disable-next-line no-console
       console.warn(`${fieldType.name} not yet supported`);
@@ -34,7 +38,7 @@ const buildType = (gqlSchema, argument, useVariables, maxDepth, currDepth = 0) =
   if (currDepth >= maxDepth) return queryStr;
   const currArgumentName = argument.type.toJSON().replace(/[[\]!]/g, '');
   const currArgumentType = gqlSchema.getType(currArgumentName);
-  if (!currArgumentType.getFields ||  useVariables) {
+  if (!currArgumentType.getFields || useVariables) {
     return mapDefault(argument, currArgumentType, useVariables);
   }
 
@@ -52,7 +56,7 @@ const buildType = (gqlSchema, argument, useVariables, maxDepth, currDepth = 0) =
       return;
     }
 
-    const typeQuery = buildType(gqlSchema, field, maxDepth, currDepth + 1);
+    const typeQuery = buildType(gqlSchema, field, useVariables, maxDepth, currDepth + 1);
 
     if (field.type.ofType instanceof GraphQLList) {
       queryStr += `${fieldName}: [\n ${typeQuery}]\n`;
