@@ -15,15 +15,25 @@ const saveFile = (destinationDirectory, outputFolder, fileName, contents) => {
   writeFileSync(join(writeFolder, `./${fileName}`), contents);
 };
 
-const saveAll = (destinationDirectory, outputFolder, operations) =>
-  operations.forEach((operation) =>
+const saveOperation = (destinationDirectory, outputFolder, operation) => {
+  saveFile(
+    destinationDirectory,
+    outputFolder,
+    `${operation.operationName}.graphql`,
+    operation.operation,
+  );
+
+  if (operation.variables)
     saveFile(
       destinationDirectory,
       outputFolder,
-      `${operation.operationName}.graphql`,
-      operation.operation,
-    ),
-  );
+      `${operation.operationName}.variables.json`,
+      operation.variables,
+    );
+};
+
+const saveAll = (destinationDirectory, outputFolder, operations) =>
+  operations.forEach((operation) => saveOperation(destinationDirectory, outputFolder, operation));
 
 const saveAsFiles = (destinationDirectory, parsedSchema) => {
   if (!parsedSchema.mutations && !parsedSchema.queries && !parsedSchema.subscriptions) {

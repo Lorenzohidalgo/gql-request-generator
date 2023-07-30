@@ -15,7 +15,7 @@ const buildItemList = (operations, rawUrl) =>
             mode: 'graphql',
             graphql: {
               query: op.operation,
-              variables: '',
+              variables: op.variables,
             },
           },
         },
