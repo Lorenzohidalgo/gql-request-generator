@@ -4,7 +4,8 @@
   "description": "",
   "main": "./src/index.js",
   "bin": {
-    "gql-request-generator": "./src/index.js"
+    "gql-request-generator": "./src/standAlone.js",
+    "gql-rq": "./src/standAlone.js"
   },
   "scripts": {
     "test": "jest --coverage",

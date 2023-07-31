@@ -8,6 +8,6 @@ describe('Test handler.js', () => {
 
   test('test1', () => {
     const arg = gqlSchema.getQueryType().getFields().Tweet.args[0];
-    buildArgumentFields(gqlSchema, arg);
+    buildArgumentFields(gqlSchema, arg, true, 10);
   });
 });
