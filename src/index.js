@@ -6,6 +6,8 @@ const main = async ({
   destDirPath,
   collectionName,
   rawUrl,
+  apiKey,
+  generatePostmanOnly = 'false',
   useVariables = 'false',
   maxDepth = 10,
   encoding = 'utf-8',
@@ -15,9 +17,15 @@ const main = async ({
 
   const parsedSchema = await parseSchema(gqlSchema, JSON.parse(useVariables), maxDepth);
 
-  saveAsFiles(destDirPath, parsedSchema);
+  if (!JSON.parse(generatePostmanOnly)) saveAsFiles(destDirPath, parsedSchema);
 
-  saveAsPostman(destDirPath, parsedSchema, collectionName, rawUrl);
+  if (JSON.parse(generatePostmanOnly) && (!collectionName || !rawUrl))
+    console.warn(
+      '--generatePostmanOnly was set to true but no valid --collectionName or --rawUrl where provided',
+    );
+
+  if (collectionName && rawUrl)
+    saveAsPostman(destDirPath, parsedSchema, collectionName, rawUrl, apiKey);
 };
 
 module.exports = {

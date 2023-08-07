@@ -1,4 +1,4 @@
-const { Collection, ItemGroup, Item, Url } = require('postman-collection');
+const { Collection, ItemGroup, Item, Url, RequestAuth } = require('postman-collection');
 
 const { mkdirSync, writeFileSync } = require('fs');
 const { resolve, join } = require('path');
@@ -22,18 +22,41 @@ const buildItemList = (operations, rawUrl) =>
       }),
   );
 
-const saveAsPostman = (destinationDirectory, parsedSchema, collectionName, rawUrl) => {
+const saveAsPostman = (destinationDirectory, parsedSchema, collectionName, rawUrl, apiKey) => {
   if (!parsedSchema.mutations && !parsedSchema.queries && !parsedSchema.subscriptions) {
     // eslint-disable-next-line no-console
     console.error('No operations found to be saved');
     return;
   }
-  
+
   const newCollection = new Collection({
     info: {
       name: collectionName,
     },
   });
+
+  if (apiKey?.length > 0) {
+    newCollection.auth = new RequestAuth({
+      type: 'apikey',
+      apikey: [
+        {
+          key: 'value',
+          value: apiKey,
+          type: 'string',
+        },
+        {
+          key: 'key',
+          value: 'x-api-key',
+          type: 'string',
+        },
+        {
+          key: 'in',
+          value: 'header',
+          type: 'string',
+        },
+      ],
+    });
+  }
 
   if (parsedSchema.mutations) {
     newCollection.items.add(
