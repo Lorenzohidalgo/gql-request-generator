@@ -10,6 +10,8 @@ program
   )
   .option('--collectionName [value]', 'Name to use name the Postman Collection')
   .option('--rawUrl [value]', 'GraphQL API endpoint URL, used to generate the Postman Collection')
+  .option('--apiKey [value]', 'API Key, will be used to generate a x-api-key header')
+  .option('--generatePostmanOnly [value]', 'Defines if only the postman collection should be generated', 'false')
   .option('--maxDepth [value]', 'query depth you want to limit (The default is 10)', 10)
   .option('--useVariables [value]', 'Defines if variables should be used while generating the requests', 'true')
   .option('--encoding [value]', 'The encoding to use while reading the files (The default is utf-8)', 'utf-8')
