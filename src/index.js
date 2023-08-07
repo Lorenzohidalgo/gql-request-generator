@@ -6,6 +6,7 @@ const main = async ({
   destDirPath,
   collectionName,
   rawUrl,
+  apiKey,
   useVariables = 'false',
   maxDepth = 10,
   encoding = 'utf-8',
@@ -17,7 +18,7 @@ const main = async ({
 
   saveAsFiles(destDirPath, parsedSchema);
 
-  saveAsPostman(destDirPath, parsedSchema, collectionName, rawUrl);
+  saveAsPostman(destDirPath, parsedSchema, collectionName, rawUrl, apiKey);
 };
 
 module.exports = {
