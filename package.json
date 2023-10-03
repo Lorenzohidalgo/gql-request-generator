@@ -46,7 +46,7 @@
   "dependencies": {
     "commander": "^11.0.0",
     "graphql": "^16.7.1",
-    "postman-collection": "^4.2.0",
+    "postman-collection": "^4.2.1",
     "prettier": "^3.0.0"
   },
   "devDependencies": {
